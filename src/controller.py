@@ -1,5 +1,5 @@
 import pygame
-from player import Player
+from src.player import Player
 
 
 class Controller:
@@ -8,7 +8,7 @@ class Controller:
 
         self.screen = pygame.display.set_mode()
         self.width, self.height = pygame.display.get_window_size()
-        self.player = Player(self.width // 2, self.height //2, 25)
+        self.player = Player(self.width // 2, self.height //2, (50, 50))
 
     def mainloop(self):
         run = True
@@ -17,22 +17,22 @@ class Controller:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_1:
-                    print("shoot")
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    print("shoot")        #must write shoot function
 
             # Movement Function  
             keys = pygame.key.get_pressed()
 
-            if keys[pygame.K_LEFT]:
+            if keys[pygame.K_LEFT] and self.player.player_hitbox.x > 0:
                 self.player.left()
 
-            if keys[pygame.K_RIGHT]:
+            if keys[pygame.K_RIGHT] and self.player.player_hitbox.right < self.width:
                 self.player.right()
         
           
-               
             self.screen.fill("white")
-            self.screen.blit(self.player.image, self.player.rect)
+            self.screen.blit(self.player.player_model, self.player.player_hitbox)
+
             pygame.display.flip()
                 
 
