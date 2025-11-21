@@ -10,7 +10,7 @@ class Player(pygame.sprite.Sprite):
         self.player_hitbox.center = (x, y)
         
     def left(self):
-        self.player_hitbox.x -= 5
+        self.player_hitbox.x -= 3
 
     def right(self):
-        self.player_hitbox.x += 5
+        self.player_hitbox.x += 3
