@@ -7,6 +7,7 @@ from src.player_projectile import Player_Projectile
 class Controller:
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
         self.clock = pygame.time.Clock()
 
         self.screen = pygame.display.set_mode()
@@ -15,6 +16,7 @@ class Controller:
         self.player = Player(self.width // 2, self.height //2, (50, 50))
         self.exit = Exit(self.width - 15, 15)
         self.player_bullets = pygame.sprite.Group()
+        self.blaster_sound = pygame.mixer.Sound("assets/blaster_sound.wav")
 
     def mainloop(self):
         run = True
@@ -30,6 +32,7 @@ class Controller:
                     position = self.player.hitbox.midtop
                     shot = Player_Projectile(position[0], position[1])
                     self.player_bullets.add(shot)
+                    self.blaster_sound.play()
                     print("shoot")
                 # if event.type == pygame.MOUSEBUTTONDOWN and self.player.hitbox.collidepoint(event.pos):
                 #     print("Hit")
