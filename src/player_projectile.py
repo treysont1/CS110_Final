@@ -7,10 +7,9 @@ class Player_Projectile(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.original_image, (9, 25))
         self.rect = self.image.get_rect()
         self.rect.midbottom = (x, y)
-        # self.projectile = pygame.Rect(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], 40, 40)
     
     def update(self, dt):
-        self.rect.centery -= 1 * dt
+        self.rect.centery -= 1 * dt / 2
 
 
 
