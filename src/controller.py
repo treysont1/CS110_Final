@@ -19,6 +19,7 @@ class Controller:
         self.player_bullets = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.blaster_sound = pygame.mixer.Sound("assets/blaster_sound.wav")
+        self.setup = 0
 
     def mainloop(self):
         run = True
@@ -26,6 +27,7 @@ class Controller:
             #dt to cap framerate to make it similar across all platforms
             dt = self.clock.tick(60)
             self.screen.fill("black")
+            self.enemy_coords1 = [(455, 240), (595, 240), (735, 240), (875, 240), (1015, 240)]
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or event.type == pygame.MOUSEBUTTONDOWN and self.exit.rect.collidepoint(event.pos):
@@ -36,12 +38,22 @@ class Controller:
                     self.player_bullets.add(shot)
                     self.blaster_sound.play()
                     # print("shoot")
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    enemy = Enemy(*(event.pos))
-                    self.enemies.add(enemy)
+                
+                # if event.type == pygame.MOUSEBUTTONDOWN:
+                #     enemy = Enemy(*(event.pos))
+                #     self.enemies.add(enemy)
+                #     print(event.pos)
                 # if event.type == pygame.MOUSEBUTTONDOWN and self.player.hitbox.collidepoint(event.pos):
                 #     print("Hit")
-                
+            if self.setup == 0:
+                for coord in self.enemy_coords1:
+                    enemy = Enemy(*(coord))
+                    self.enemies.add(enemy)
+                self.setup += 1
+            
+            if not self.enemies:
+                self.setup = 0
+
             self.enemies.draw(self.screen)
 
             self.player_bullets.draw(self.screen)
