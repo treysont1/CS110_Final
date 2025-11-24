@@ -6,7 +6,7 @@ class Controller:
     def __init__(self):
         pygame.init()
 
-        self.screen = pygame.display.set_mode()
+        self.screen = pygame.display.set_mode(size = (800, 700))
         self.width, self.height = pygame.display.get_window_size()
         self.player = Player(self.width // 2, self.height //2, (50, 50))
 
