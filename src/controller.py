@@ -5,13 +5,14 @@ from src.player_projectile import Player_Projectile
 from src.enemies import Enemy
 
 
+
 class Controller:
     def __init__(self):
         pygame.init()
         pygame.mixer.init()
         self.clock = pygame.time.Clock()
 
-        self.screen = pygame.display.set_mode(size = (800, 700))
+        self.screen = pygame.display.set_mode()
         self.width, self.height = pygame.display.get_window_size()
 
         self.player = Player(self.width // 2, self.height - 150, (50, 50))
