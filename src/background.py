@@ -1,0 +1,6 @@
+import pygame 
+
+class Backgrounds(pygame.sprite.Sprite):
+    def __init__(self, size, img):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(pygame.image.load(img).convert_alpha(), size)
