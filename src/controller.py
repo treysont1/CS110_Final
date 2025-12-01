@@ -4,7 +4,7 @@ from src.exit import Exit
 from src.player_projectile import Player_Projectile
 from src.enemies import Enemy
 
-#Hellow World
+
 
 class Controller:
     def __init__(self):
