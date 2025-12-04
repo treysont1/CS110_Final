@@ -20,9 +20,11 @@ class Controller:
         pygame.display.set_caption("Space Rotters")
         self.background = Backgrounds((self.width, self.height), "assets/space_bg.jpg")
         self.start = Start(self.width //2, self.height // 2)
+        self.exit = Exit(self.width - 15, 15)
 
         self.player = Player(self.width // 2, self.height - 150, (50, 50))
-        self.exit = Exit(self.width - 15, 15)
+        self.player_group = pygame.sprite.GroupSingle()
+        self.player_group.add(self.player)
         self.player_bullets = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.enemy_shots = pygame.sprite.Group()
@@ -48,10 +50,12 @@ class Controller:
 
         
         move_timer = 750
-        move_event = pygame.USEREVENT + 2
+        move_event = pygame.USEREVENT + 1
         pygame.time.set_timer(move_event, move_timer)
 
         enemy_speed = 20
+        enemy_shot_timer = 750
+        enemy_shot_event = pygame.USEREVENT + 2
                 
         while run == "Game":
             #dt to cap framerate to make it similar across all platforms
@@ -96,7 +100,7 @@ class Controller:
                 #     enemy = Enemy(*(event.pos))
                 #     self.enemies.add(enemy)
                 #     print(event.pos)
-                # if event.type == pygame.MOUSEBUTTONDOWN and self.player.hitbox.collidepoint(event.pos):
+                # if event.type == pygame.MOUSEBUTTONDOWN and self.player.rect.collidepoint(event.pos):
                 #     print("Hit")
             edge_hit = False
             right_hit = False
@@ -123,7 +127,7 @@ class Controller:
                 enemy_speed = - (enemy_speed)
                 if move_timer > 350:
                     move_timer -= 50
-                    
+
                 pygame.time.set_timer(move_event, move_timer)
         
             
@@ -131,17 +135,17 @@ class Controller:
             
             # Movement Function  
             
-            if keys[pygame.K_LEFT] and self.player.hitbox.x > 0:
+            if keys[pygame.K_LEFT] and self.player.rect.left > 0:
                 self.player.left(dt)
 
-            if keys[pygame.K_RIGHT] and self.player.hitbox.right < self.width:
+            if keys[pygame.K_RIGHT] and self.player.rect.right < self.width:
                 self.player.right(dt)
             
             # New Shoot Function
 
             if keys[pygame.K_SPACE]:
                 if current_time - self.last_shot > self.shot_cooldown:
-                    shot_position = self.player.hitbox.midtop
+                    shot_position = self.player.rect.midtop
                     shot = Player_Projectile(*shot_position)
                     self.player_bullets.add(shot)
                     self.blaster_sound.play()
@@ -157,10 +161,23 @@ class Controller:
 
             pygame.sprite.groupcollide(self.player_bullets, self.enemies, True, True)
 
-            self.screen.blit(self.player.model, self.player.hitbox)
-            self.screen.blit(self.exit.exit_button, self.exit.rect)
+            if not self.player_group:
+                run = "Game Over"
+            
 
+            self.screen.blit(self.player.model, self.player.rect)
+            self.screen.blit(self.exit.exit_button, self.exit.rect)
+            pygame.sprite.groupcollide(self.player_group, self.enemy_shots, True, True)
+            
             pygame.display.flip()
+
+        while run == "Game Over":
+            self.screen.fill((0, 0, 0))
+            self.screen.blit(self.exit.exit_button, self.exit.rect)
+            pygame.display.flip()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or event.type == pygame.MOUSEBUTTONDOWN and self.exit.rect.collidepoint(event.pos):
+                    run = False
                             
 
                     
