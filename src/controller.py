@@ -1,8 +1,9 @@
 import pygame
 import random
 from src.player import Player
+from src.titles import BrainRotters, Loser
 from src.background import Backgrounds
-from src.buttons import Start, Exit
+from src.buttons import Start, Replay, Exit
 from src.player_projectile import Player_Projectile
 from src.enemies import Enemy
 from src.enemy_projectile import Enemy_Projectile
@@ -16,11 +17,14 @@ class Controller:
         pygame.font.init()
         self.clock = pygame.time.Clock()
 
-        self.screen = pygame.display.set_mode(size= (800, 800))
+        self.screen = pygame.display.set_mode(size= (800, 600))
         self.width, self.height = pygame.display.get_window_size()
         pygame.display.set_caption("Space Rotters")
         self.background = Backgrounds((self.width, self.height), "assets/space_bg.jpg")
-        self.start = Start(self.width //2, self.height // 2)
+        self.title = BrainRotters(self.width * 0.5, self.height * 0.4)
+        self.loser = Loser(self.width * 0.5, self.height * 0.4)
+        self.start = Start(self.width // 2 , self.height // 1.4)
+        self.restart = Replay(self.width // 2 , self.height // 1.4)
         self.exit = Exit(self.width - 15, 15)
         self.font = pygame.font.SysFont("Georgia", 30)
 
@@ -37,10 +41,13 @@ class Controller:
 
     def mainloop(self):
         run = "Start"
+
+        #title screen
         while run == "Start":
             self.screen.fill((0,0,0))
             self.screen.blit(self.background.image, (0,0))
-            self.screen.blit(self.start.start_button, self.start.rect)
+            self.screen.blit(self.title.logo, self.title.rect)
+            self.screen.blit(self.start.image, self.start.rect)
             self.screen.blit(self.exit.exit_button, self.exit.rect)
             pygame.display.flip()
 
@@ -96,7 +103,7 @@ class Controller:
                 self.level += 1
             
             if self.level == 4 and not self.enemies:
-                run = "Game Over"
+                run = "Winner"
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or event.type == pygame.MOUSEBUTTONDOWN and self.exit.rect.collidepoint(event.pos):
@@ -204,8 +211,7 @@ class Controller:
                 score += 25
 
             if not self.player_group or reach_player:
-                run = "Game Over"
-            
+                run = "Loser"
 
             self.screen.blit(self.player.model, self.player.rect)
             self.screen.blit(self.exit.exit_button, self.exit.rect)
@@ -213,18 +219,18 @@ class Controller:
             
             pygame.display.flip()
 
-        while run == "Game Over":
+        #User loses screen
+        while run == "Loser":
             self.screen.fill((0, 0, 0))
+            self.screen.blit(self.background.image, (0,0))
+            self.screen.blit(self.loser.logo, self.loser.rect)
+            self.screen.blit(self.restart.image, self.restart.rect)
             self.screen.blit(self.exit.exit_button, self.exit.rect)
             pygame.display.flip()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or event.type == pygame.MOUSEBUTTONDOWN and self.exit.rect.collidepoint(event.pos):
                     run = False
-                            
-
-                    
-                        
-                        
-                    
-                    
-
+                elif event.type == pygame.MOUSEBUTTONDOWN and self.restart.rect.collidepoint(event.pos):
+                    run = "Game"
+                    #figure out to to interate this back to the run == "Game" mode
