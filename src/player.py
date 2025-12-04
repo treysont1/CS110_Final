@@ -6,14 +6,14 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.original_image = pygame.image.load(img)
         self.model = pygame.transform.scale(self.original_image, size)
-        self.hitbox = self.model.get_rect()
-        self.hitbox.center = (x, y)
+        self.rect = self.model.get_rect()
+        self.rect.center = (x, y)
         
     def left(self, dt):
-        self.hitbox.x -= 1 * dt / 2
+        self.rect.x -= 1 * dt / 2
 
     def right(self, dt):
-        self.hitbox.x += 1 * dt / 2
+        self.rect.x += 1 * dt / 2
     
 
 
