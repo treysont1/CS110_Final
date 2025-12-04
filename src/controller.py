@@ -55,18 +55,18 @@ class Controller:
 
         enemy_speed = 20
         # enemy_shot_timer = 750
-        # enemy_shot_event = pygame.USEREVENT + 2
-        # pygame.time.set_timer(enemy_shot_event, enemy_shot_timer)
+        enemy_shot_timer = random.randint(500, 1000)
+        enemy_shot_event = pygame.USEREVENT + 2
+        pygame.time.set_timer(enemy_shot_event, enemy_shot_timer)
                 
         while run == "Game":
             #dt to cap framerate to make it similar across all platforms
             dt = self.clock.tick(60)
-            # self.screen.fill("black")
             self.screen.blit(self.background.image, (0,0))
             self.enemy_coords1 = [-280, -140, 0, 140, 280]
             keys = pygame.key.get_pressed()
             current_time = pygame.time.get_ticks()
-            
+
 
             if self.setup == 0:
                 for coord in self.enemy_coords1:
@@ -76,7 +76,6 @@ class Controller:
             
             if not self.enemies:
                 self.setup = 0
-
            
 
             for event in pygame.event.get():
@@ -86,7 +85,15 @@ class Controller:
                 if event.type == move_event:
                     for enemy in self.enemies:
                         enemy.move(enemy_speed)
-                
+
+                if event.type == enemy_shot_event:
+                    shooter = random.choice(list(self.enemies))
+                    enemy_shot_position = shooter.rect.midbottom
+                    enemy_shot = Enemy_Projectile(*enemy_shot_position)
+                    self.enemy_shots.add(enemy_shot)
+                    enemy_shot_timer = random.randint(500, 1000)
+                    pygame.time.set_timer(enemy_shot_event, enemy_shot_timer)
+                    
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_j:
                     shooter = random.choice(list(self.enemies))
                     enemy_shot_position = shooter.rect.midbottom
