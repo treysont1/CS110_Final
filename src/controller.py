@@ -68,7 +68,7 @@ class Controller:
             dt = self.clock.tick(60)
             self.screen.blit(self.background.image, (0,0))
             self.enemy_coords1 = [-280, -140, 0, 140, 280]
-            text_surface = self.font.render(f"Score: {score}", True, "white") #Turns the text line into an image that Pygame can draw, font.render(...) creates a text surface,True= smoother text
+            text_surface = self.font.render(f"Score: {score}", True, "white")
             self.screen.blit(text_surface, (10, 0))
             keys = pygame.key.get_pressed()
             current_time = pygame.time.get_ticks()
