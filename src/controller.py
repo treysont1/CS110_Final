@@ -48,8 +48,8 @@ class Controller:
         move_timer = 750
         move_event = pygame.USEREVENT + 2
         pygame.time.set_timer(move_event, move_timer)
-        enemy_speed = 20
 
+        enemy_speed = 20
                 
         while run == "Game":
             #dt to cap framerate to make it similar across all platforms
@@ -79,6 +79,10 @@ class Controller:
                 if event.type == move_event:
                     for enemy in self.enemies:
                         enemy.move(enemy_speed)
+                
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_j:
+                    shooter = random.choice(self.enemies)
+
 
               
                 
@@ -119,13 +123,6 @@ class Controller:
         
             
 
-            self.enemies.draw(self.screen)
-
-            self.player_bullets.draw(self.screen)
-
-            self.player_bullets.update(self.screen, dt)
-
-            pygame.sprite.groupcollide(self.player_bullets, self.enemies, True, True)
             
             # Movement Function  
             
@@ -139,12 +136,17 @@ class Controller:
 
             if keys[pygame.K_SPACE]:
                 if current_time - self.last_shot > self.shot_cooldown:
-                    position = self.player.hitbox.midtop
-                    shot = Player_Projectile(*position)
+                    shot_position = self.player.hitbox.midtop
+                    shot = Player_Projectile(*shot_position)
                     self.player_bullets.add(shot)
                     self.blaster_sound.play()
                     self.last_shot = current_time
 
+            self.enemies.draw(self.screen)
+            self.player_bullets.draw(self.screen)
+            self.player_bullets.update(self.screen, dt)
+
+            pygame.sprite.groupcollide(self.player_bullets, self.enemies, True, True)
 
             self.screen.blit(self.player.model, self.player.hitbox)
             self.screen.blit(self.exit.exit_button, self.exit.rect)
