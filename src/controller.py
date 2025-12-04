@@ -24,9 +24,9 @@ class Controller:
         self.exit = Exit(self.width - 15, 15)
         self.font = pygame.font.SysFont("Georgia", 30)
 
-        self.player = Player(self.width // 2, self.height - 150, (50, 50))
+        # self.player = Player(self.width // 2, self.height - 150, (50, 50))
         self.player_group = pygame.sprite.GroupSingle()
-        self.player_group.add(self.player)
+        # self.player_group.add(self.player)
         self.player_bullets = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.enemy_shots = pygame.sprite.Group()
@@ -62,6 +62,7 @@ class Controller:
         pygame.time.set_timer(enemy_shot_event, enemy_shot_timer)
 
         score = 0
+        lives = 3
                 
         while run == "Game":
             #dt to cap framerate to make it similar across all platforms
@@ -73,6 +74,9 @@ class Controller:
             keys = pygame.key.get_pressed()
             current_time = pygame.time.get_ticks()
 
+            if lives > 0 and not self.player_group:
+                self.player = Player(self.width // 2, self.height - 150, (50, 50))
+                self.player_group.add(self.player)
 
             if self.level == 1:
                 for coord in self.enemy_coords1:
@@ -128,7 +132,10 @@ class Controller:
 
                 #developer tool
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_d:
-                    run = "Game Over"
+                    # run = "Game Over"
+                    lives -= 1
+                    pygame.time.wait(1000)
+                    print(lives)
 
 
                 #  Hitbox Testing
@@ -203,13 +210,18 @@ class Controller:
             if pygame.sprite.groupcollide(self.player_bullets, self.enemies, True, True):
                 score += 25
 
-            if not self.player_group or reach_player:
+            if pygame.sprite.groupcollide(self.player_group, self.enemy_shots, True, True):
+                lives -= 1
+                print("hit")
+
+            if (not self.player_group and lives == 0) or reach_player:
                 run = "Game Over"
             
 
-            self.screen.blit(self.player.model, self.player.rect)
+            # self.screen.blit(self.player.model, self.player.rect)
+            self.player_group.draw(self.screen)
             self.screen.blit(self.exit.exit_button, self.exit.rect)
-            pygame.sprite.groupcollide(self.player_group, self.enemy_shots, True, True)
+            
             
             pygame.display.flip()
 
