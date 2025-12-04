@@ -83,8 +83,8 @@ class Controller:
                         enemy.move(enemy_speed)
                 
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_j:
-                    shooter = random.choice(self.enemies)
-                    enemy_shot_position = shooter.midbottom
+                    shooter = random.choice(list(self.enemies))
+                    enemy_shot_position = shooter.rect.midbottom
                     enemy_shot = Enemy_Projectile(*enemy_shot_position)
                     self.enemy_shots.add(enemy_shot)
 
@@ -123,7 +123,7 @@ class Controller:
                 enemy_speed = - (enemy_speed)
                 if move_timer > 350:
                     move_timer -= 50
-                print(move_timer)
+                    
                 pygame.time.set_timer(move_event, move_timer)
         
             
@@ -148,8 +148,10 @@ class Controller:
                     self.last_shot = current_time
 
             self.enemies.draw(self.screen)
+
             self.enemy_shots.draw(self.screen)
             self.enemy_shots.update(self.screen, dt)
+
             self.player_bullets.draw(self.screen)
             self.player_bullets.update(self.screen, dt)
 
