@@ -75,6 +75,7 @@ class Controller:
             level = 1
             score = 0
             lives = 3
+            blasters = 1
             player_alive = True
 
             respawn_event = pygame.USEREVENT + 3
@@ -109,6 +110,7 @@ class Controller:
                         enemy2 = Enemy(self.width // 2 + coord, 125, "assets/skibiditoilet.png")
                         self.enemies.add(enemy1, enemy2)
                     level += 1
+                    blasters += 1
                     
                 if level == 3 and not self.enemies:
                     for coord in self.enemy_coords1:
@@ -117,6 +119,7 @@ class Controller:
                         enemy3 = Enemy(self.width // 2 + coord, 190, "assets/shark.png")
                         self.enemies.add(enemy1, enemy2, enemy3)
                     level += 1
+                    blasters += 1
                 
                 if level == 4 and not self.enemies:
                     for group in self.groups:
@@ -219,11 +222,30 @@ class Controller:
 
                     if keys[pygame.K_SPACE]:
                         if current_time - self.last_shot > self.shot_cooldown:
-                            shot_position = self.player.rect.midtop
-                            shot = Player_Projectile(*shot_position)
-                            self.player_shots.add(shot)
+                            if blasters == 1:
+                                shot_position = self.player.rect.midtop
+                                shot_mid, shot_bottom = shot_position
+                                shot = Player_Projectile(midx = shot_mid, bottomy = shot_bottom)
+                                self.player_shots.add(shot)
+                                
+                            if blasters >= 2:
+                                shot1_position = self.player.rect.topleft
+                                shot1_left, shot1_bottom = shot1_position
+                                shot1 = Player_Projectile(leftx = shot1_left, bottomy = shot1_bottom)
+                                shot2_position = self.player.rect.topright
+                                shot2_right, shot2_bottom = shot2_position
+                                shot2 = Player_Projectile(rightx = shot2_right, bottomy = shot2_bottom)
+                                self.player_shots.add(shot1, shot2)
+
+                                if blasters == 3:
+                                    shot3_position = self.player.rect.midtop
+                                    shot_mid, shot_bottom = shot3_position
+                                    shot3 = Player_Projectile(midx = shot_mid, bottomy = shot_bottom)
+                                    self.player_shots.add(shot3)
+
                             self.blaster_sound.play()
                             self.last_shot = current_time
+
 
                 self.enemies.draw(self.screen)
 
@@ -238,6 +260,8 @@ class Controller:
 
                 if pygame.sprite.groupcollide(self.player_group, self.enemy_shots, True, True):
                     lives -= 1
+                    if blasters > 1:
+                        blasters -= 1
                     self.enemy_shots.empty()
                     self.player_shots.empty()
                     player_alive = False
@@ -250,7 +274,6 @@ class Controller:
                     
                     run = "Loser"
 
-                # self.screen.blit(self.player.model, self.player.rect)
                 self.player_group.draw(self.screen)
                 self.screen.blit(self.exit.exit_button, self.exit.rect)
                 
