@@ -132,7 +132,6 @@ class Controller:
                     
                     if event.type == respawn_event:
                         player_alive = True
-                        print("respawn starting")
 
                     if event.type == move_event and player_alive:
                         for enemy in self.enemies:
@@ -164,7 +163,6 @@ class Controller:
                         run = "Winner"
                         for group in self.groups:
                             group.empty()
-                        print(lives)
 
 
                     #  Hitbox Testing
@@ -267,7 +265,6 @@ class Controller:
                     self.player_shots.empty()
                     player_alive = False
                     pygame.time.set_timer(respawn_event, 1500, 1)
-                    print("hit")
 
                 if (not self.player_group and lives == 0) or reach_player:
                     for group in self.groups:
