@@ -6,7 +6,7 @@ class BrainRotters:
         self.logo = pygame.image.load(img)
         self.logo = pygame.transform.smoothscale(self.logo, (512*1.7, 104*1.7))
         self.rect = self.logo.get_rect()
-        print(x, y)
+        # print(x, y)
         self.rect.center = (x, y)
 
 class Loser:
@@ -15,5 +15,5 @@ class Loser:
         self.logo = pygame.image.load(img)
         self.logo = pygame.transform.smoothscale(self.logo, (512*1.7, 104*1.7))
         self.rect = self.logo.get_rect()
-        print(x, y)
+        # print(x, y)
         self.rect.center = (x, y)
