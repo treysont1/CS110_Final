@@ -24,9 +24,9 @@ class Controller:
         self.exit = Exit(self.width - 15, 15)
         self.font = pygame.font.SysFont("Georgia", 30)
 
-        # self.player = Player(self.width // 2, self.height - 150, (50, 50))
+        self.player = Player(self.width // 2, self.height - 150, (50, 50))
         self.player_group = pygame.sprite.GroupSingle()
-        # self.player_group.add(self.player)
+        self.player_group.add(self.player)
         self.player_bullets = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.enemy_shots = pygame.sprite.Group()
@@ -63,6 +63,8 @@ class Controller:
 
         score = 0
         lives = 3
+        player_alive = True
+        respawn_event = pygame.USEREVENT + 3
                 
         while run == "Game":
             #dt to cap framerate to make it similar across all platforms
@@ -77,6 +79,7 @@ class Controller:
             if lives > 0 and not self.player_group:
                 self.player = Player(self.width // 2, self.height - 150, (50, 50))
                 self.player_group.add(self.player)
+
 
             if self.level == 1:
                 for coord in self.enemy_coords1:
@@ -105,12 +108,16 @@ class Controller:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or event.type == pygame.MOUSEBUTTONDOWN and self.exit.rect.collidepoint(event.pos):
                     run = False
+                
+                if event.type == respawn_event:
+                    player_alive = True
+                    print("respawn starting")
 
-                if event.type == move_event:
+                if event.type == move_event and player_alive:
                     for enemy in self.enemies:
                         enemy.move(enemy_speed)
 
-                if event.type == enemy_shot_event:
+                if event.type == enemy_shot_event and player_alive:
                     shooter = random.choice(list(self.enemies))
                     enemy_shot_position = shooter.rect.midbottom
                     enemy_shot = Enemy_Projectile(*enemy_shot_position)
@@ -133,8 +140,7 @@ class Controller:
                 #developer tool
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_d:
                     # run = "Game Over"
-                    lives -= 1
-                    pygame.time.wait(1000)
+                    lives += 1
                     print(lives)
 
 
@@ -182,22 +188,22 @@ class Controller:
         
             
             # Movement Function  
-            
-            if keys[pygame.K_LEFT] and self.player.rect.left > 0:
-                self.player.left(dt)
+            if player_alive:
+                if keys[pygame.K_LEFT] and self.player.rect.left > 0:
+                    self.player.left(dt)
 
-            if keys[pygame.K_RIGHT] and self.player.rect.right < self.width:
-                self.player.right(dt)
-            
-            # New Shoot Function
+                if keys[pygame.K_RIGHT] and self.player.rect.right < self.width:
+                    self.player.right(dt)
+                
+                # New Shoot Function
 
-            if keys[pygame.K_SPACE]:
-                if current_time - self.last_shot > self.shot_cooldown:
-                    shot_position = self.player.rect.midtop
-                    shot = Player_Projectile(*shot_position)
-                    self.player_bullets.add(shot)
-                    self.blaster_sound.play()
-                    self.last_shot = current_time
+                if keys[pygame.K_SPACE]:
+                    if current_time - self.last_shot > self.shot_cooldown:
+                        shot_position = self.player.rect.midtop
+                        shot = Player_Projectile(*shot_position)
+                        self.player_bullets.add(shot)
+                        self.blaster_sound.play()
+                        self.last_shot = current_time
 
             self.enemies.draw(self.screen)
 
@@ -212,6 +218,9 @@ class Controller:
 
             if pygame.sprite.groupcollide(self.player_group, self.enemy_shots, True, True):
                 lives -= 1
+                self.enemy_shots.empty()
+                player_alive = False
+                pygame.time.set_timer(respawn_event, 1500, 1)
                 print("hit")
 
             if (not self.player_group and lives == 0) or reach_player:
@@ -222,7 +231,7 @@ class Controller:
             self.player_group.draw(self.screen)
             self.screen.blit(self.exit.exit_button, self.exit.rect)
             
-            
+    
             pygame.display.flip()
 
         while run == "Game Over":
